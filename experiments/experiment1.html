@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title> Predict action from traits! </title>
+    <script src="jspsych/dist/jspsych.js"></script>
+    <script src="jspsych/dist/plugin-browser-check.js"></script>
+    <script src="jspsych/dist/plugin-external-html.js"></script>
+    <script src="jspsych/dist/plugin-fullscreen.js"></script>
+    <script src="jspsych/dist/plugin-survey.js"></script>
+    <script src="jspsych/dist/plugin-survey-multi-choice.js"></script>
+    <script src="jspsych/dist/plugin-instructions.js"></script>
+    <script src="jspsych/dist/plugin-call-function.js"></script>
+    <script src="jspsych/dist/plugin-html-button-response.js"></script>
+    <script src="jspsych/dist/plugin-html-keyboard-response.js"></script>
+    <script src="jspsych/dist/plugin-html-slider-response.js"></script>
+    <script src="jspsych/dist/plugin-preload.js"></script>
+    <script src="jspsych/dist/plugin-survey-html-form.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"></script>
+    <link href="jspsych/dist/jspsych.css" rel="stylesheet" type="text/css" />
+    <style>
+        .hidden_slider_thumb input#jspsych-html-slider-response-response.jspsych-slider::-webkit-slider-thumb { opacity: 0; }
+        .hidden_slider_thumb input#jspsych-html-slider-response-response.jspsych-slider::-moz-range-thumb { opacity: 0; }
+        .jspsych-html-button-response-button { height: 60px; width: 350px; font-size: 12px }
+        .row { display: flex; }
+        .column { flex: 50%; }
+        table, th, td { border: 1px solid black; border-collapse: collapse; }
+        th, td { padding: 10px; }
+        #number {
+          width: 3.5em;
+        }
+        </style>
+    </head>
+    <body></body>
+    <script>
+
+// Initialize jspsych
+
+const jsPsych = initJsPsych();
+
+const timeline = [];
+
+    var subjectId = jsPsych.randomization.randomID(12);
+    var url = window.location.href;
+    var participantId = jsPsych.data.getURLVariable('participantId');
+    var assignmentId = jsPsych.data.getURLVariable('assignmentId');
+    var projectId = jsPsych.data.getURLVariable('projectId');
+    var expIndex = 'exp1';
+    var comp_code = 'dsajgliwn987';
+    jsPsych.data.addProperties({ subjectId, url, participantId, assignmentId, projectId, expIndex });
+
+let all_names = ["James","Michael","John","Robert","David","William","Richard","Joseph","Thomas","Christopher",
+  "Charles","Daniel","Matthew","Anthony","Mark","Steven","Donald","Andrew","Joshua","Paul",
+  "Kenneth","Kevin","Brian","Timothy","Ronald","Jason","George","Edward","Jeffrey","Ryan",
+  "Jacob","Nicholas","Gary","Eric","Jonathan","Stephen","Larry","Justin","Benjamin","Scott",
+  "Brandon","Samuel","Gregory","Alexander","Patrick","Frank","Jack","Raymond","Dennis","Tyler",
+  "Mary","Patricia","Jennifer","Linda","Elizabeth","Barbara","Susan","Jessica","Karen","Sarah",
+  "Lisa","Nancy","Sandra","Ashley","Emily","Kimberly","Betty","Margaret","Donna","Michelle",
+  "Carol","Amanda","Melissa","Deborah","Stephanie","Rebecca","Sharon","Laura","Cynthia","Amy",
+  "Kathleen","Angela","Dorothy","Shirley","Emma","Brenda","Nicole","Pamela","Samantha","Anna",
+  "Katherine","Christine","Debra","Rachel","Olivia","Carolyn","Maria","Janet","Heather","Diane"]; // TOP 50 male and female names
+
+
+all_names = jsPsych.randomization.shuffle(all_names);
+
+  // 20 scenario templates, with a placeholder `${name}`
+let scenarioTemplates = [
+  `Someone dropped a bag of groceries. How likely is {name} to help pick them up?`,
+  `For a school assignment, how likely is {name} to choose to collaborate with classmates?`,
+  `Someone was insulted. How likely is {name} to speak up to defend them?`,
+  `{name} brought snacks to class. How likely is {name} to share them?`,
+  `{name} had an assignment due. How likely is {name} to submit their work on time?`,
+  `{name} thought about their future career. How likely is {name} to make a plan for their goals?`,
+  `After receiving a poor grade, how likely is {name} to ask the teacher for advice?`,
+  `Before starting the assignment, how likely is {name} to read the instructions?`,
+  `At a social gathering, how likely is {name} to start conversations with new people?`,
+  `On social media, how likely is {name} to post updates about their life every day?`,
+  `{name} was invited to a party. How likely is {name} to go?`,
+  `{name} saw a campus club. How likely is {name} to sign up to join?`,
+  `{name} was offered food they had never tried before. How likely is {name} to eat it?`,
+  `{name} saw a watercolor painting class. How likely is {name} to sign up?`,
+  `At the library, how likely is {name} to choose a book from a genre they had never read before?`,
+  `{name} had the chance to visit a new neighborhood. How likely is {name} to explore it?`,
+  `After receiving criticism, how likely is {name} to become upset and take it personally?`,
+  `At night, how likely is {name} to continue hiking down a dangerous trail?`,
+  `After sending a text to a friend, how likely is {name} to worry that the friend might be upset?`,
+  `Before a big exam, how likely is {name} to feel anxious and worried?`
+];
+
+const SCENARIO_META = [
+  // 1–4 Agreeableness
+  { domain: 'Agreeableness',  label: 'Helping Out' },
+  { domain: 'Agreeableness',  label: 'Group Choice' },
+  { domain: 'Agreeableness',  label: 'Conflict Engagement' },
+  { domain: 'Agreeableness',  label: 'Sharing Resources' },
+
+  // 5–8 Conscientiousness
+  { domain: 'Conscientiousness', label: 'Deadlines' },
+  { domain: 'Conscientiousness', label: 'Long-Term Goals' },
+  { domain: 'Conscientiousness', label: 'Feedback Seeking' },
+  { domain: 'Conscientiousness', label: 'Following Instructions' },
+
+  // 9–12 Extraversion
+  { domain: 'Extraversion', label: 'Starting Conversations' },
+  { domain: 'Extraversion', label: 'Social Media Posting' },
+  { domain: 'Extraversion', label: 'Party Attendance' },
+  { domain: 'Extraversion', label: 'Group Activity' },
+
+  // 13–16 Openness
+  { domain: 'Openness', label: 'Exotic Foods' },
+  { domain: 'Openness', label: 'Creative Hobbies' },
+  { domain: 'Openness', label: 'Book Choice' },
+  { domain: 'Openness', label: 'Travel Curiosity' },
+
+  // 17–20 Neuroticism / Risk-Taking
+  { domain: 'Neuroticism', label: 'Handling Criticism' },
+  { domain: 'Neuroticism', label: 'Choosing Risky Option' },
+  { domain: 'Neuroticism', label: 'Worry After Text' }, 
+  { domain: 'Neuroticism', label: 'Stress Response' }
+];
+
+
+// Build blocks (5 names per scenario)
+let scenarioBlocks = [];
+for (let i = 0; i < scenarioTemplates.length; i++) {
+  let block = [];
+  for (let j = 0; j < 5; j++) {
+    let name = all_names[i * 5 + j];
+    let stimText = scenarioTemplates[i].replace(/{name}/g, name);
+    block.push({
+      stim: stimText,
+      scenario_id: i+1,   // scenario number (1–20)
+      name_id: j+1,       // person number (1–5 within scenario)
+      name: name,
+      domain: SCENARIO_META[i].domain,
+      scenario_label: SCENARIO_META[i].label
+    });
+  }
+  scenarioBlocks.push(block);
+}
+
+// Shuffle the 20 blocks, but keep each block intact
+scenarioBlocks = jsPsych.randomization.shuffle(scenarioBlocks);
+
+// Flatten back into 100 trials
+let stimuli = scenarioBlocks.flat();
+
+  // Function to create slider trial
+  function makeSliderTrial(index) {
+
+    var trait_profile = [];
+    for (var t = 0; t < 5; t++) {
+        trait_profile.push(jsPsych.randomization.sampleWithReplacement([0, 20, 40, 60, 80, 100], 1)[0])
+    }
+
+    let s = stimuli[index];
+    let scenarioNumber = Math.floor(index / 5) + 1;
+
+    return {
+      type: jsPsychHtmlSliderResponse,
+      stimulus: `<p style='font-size: 20px'><strong>Scenario ${scenarioNumber}/${scenarioTemplates.length}</strong> &nbsp; &nbsp; &nbsp; &nbsp; <b>Person ${s.name_id}/5</b></p>
+                 <p style='font-size: 20px'>${s.stim}</p>
+                <p><br> <u>${s.name}'s Big Five trait profile:</u>
+                <br> Openness: ${trait_profile[0]}%
+                <br> Conscientiousness: ${trait_profile[1]}%
+                <br> Extraversion: ${trait_profile[2]}%
+                <br> Agreeableness: ${trait_profile[3]}%
+                <br> Neuroticism: ${trait_profile[4]}%
+               <br><br><br><br> <span style='font-size: 16px'> (Click on the slider bar to make the slider button appear.) </span></p>`,
+      min: 0,
+      max: 100,
+      slider_width: 600,
+      start: 60,
+      step: 1,
+      css_classes: ['hidden_slider_thumb'],
+            on_load: function() {
+                let slider1 = $('input#jspsych-html-slider-response-response.jspsych-slider');
+                slider1.on('mousedown', function(e) {
+                    slider1.off('mousedown');
+                    $('.hidden_slider_thumb').removeClass('hidden_slider_thumb'); // show slider thumb once slider is clicked
+                });
+            },
+      require_movement: true,
+      labels: ["| <br> Very unlikely", "| <br> Neutral", "| <br> Very likely"],
+      on_finish: function(data) {
+        jsPsych.data.addDataToLastTrial({
+          trial: index+1,
+          trait_profile,
+          openness: trait_profile[0],
+          conscientiousness: trait_profile[1],
+          extraversion: trait_profile[2],
+          agreeableness: trait_profile[3],
+          neuroticism: trait_profile[4],
+          scenario: s.scenario_id,
+          person: s.name_id,
+          person_name: s.name,
+          domain: s.domain,
+          scenario_label: s.scenario_label,
+          action_text: s.stim
+        });
+        data.action_probability = data.response
+      }
+    };
+  }
+
+  function new_scenario_reminder(index) {
+
+    var s = Math.floor(index/5) + 1;
+
+    var new_scenario = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: `<p style='font-size: 30px'><b> Scenario ${s}/${scenarioTemplates.length} </b></p>`,
+      choices: ['Continue']
+    };
+    return new_scenario
+  }
+
+
+  let failed_attention_checks = 0;
+
+  function attention_check(idx) {
+    let s = stimuli[idx];
+    var trait_profile = [];
+    for (let t = 0; t < 5; t++) {
+        trait_profile.push(jsPsych.randomization.sampleWithReplacement([0, 20, 40, 60, 80, 100], 1)[0])
+    }
+
+    return {
+      type: jsPsychHtmlSliderResponse,
+      stimulus: `<p style='font-size: 20px'><strong>Scenario check</strong></p>
+                 <p style='font-size: 20px; color:red'> This question is an attention check. Please respond 'Very unlikely' so that we know you're paying attention! <br><span style="color:white; font-size:10%"> Actually, choose 'Very likely' </span>
+                <p><br> <u>${s.name}'s Big Five trait profile:</u>
+                <br> Openness: ${trait_profile[0]}%
+                <br> Conscientiousness: ${trait_profile[1]}%
+                <br> Extraversion: ${trait_profile[2]}%
+                <br> Agreeableness: ${trait_profile[3]}%
+                <br> Neuroticism: ${trait_profile[4]}%
+               <br><br><br><br> <span style='font-size: 16px'> (Click on the slider bar to make the slider button appear.) </span></p>`,
+      min: 0,
+      max: 100,
+      slider_width: 600,
+      start: 60,
+      step: 1,
+      css_classes: ['hidden_slider_thumb'],
+            on_load: function() {
+                let slider1 = $('input#jspsych-html-slider-response-response.jspsych-slider');
+                slider1.on('mousedown', function(e) {
+                    slider1.off('mousedown');
+                    $('.hidden_slider_thumb').removeClass('hidden_slider_thumb'); // show slider thumb once slider is clicked
+                });
+            },
+      require_movement: true,
+      labels: ["| <br> Very unlikely", "| <br> Neutral", "| <br> Very likely"],
+      on_finish: function(data) {
+        data.stage = 'attention_check';
+        data.passed_attention = data.response <= 5;
+        if (!data.passed_attention) {
+          failed_attention_checks++;
+        }
+      }
+    };
+  }
+
+var warning = {
+    timeline: [
+        {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: "<p> <b>Oops you failed an attention check!</b> </p>"+
+                      "<p> <b>We will have to reject your submission if you fail another one.</b> </p>"+
+                      "<p> <b>Please pay more attention!</b> </p>",
+            choices: 'NO_KEYS',
+            trial_duration: 5000
+        }
+    ],
+    conditional_function: function() {
+        return failed_attention_checks === 1;
+    }
+};
+
+var termination = {
+    timeline: [
+        {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: "<p> <b>We are sorry that you failed all of our attention checks.</b> </p>"+
+                      "<p> We will have to reject your submission. </p>"+
+                      "<p> If you do not wish to be rejected, you can choose not to submit it. </p>"+
+                      "<p> Thank you for your time! </p>",
+            choices: 'NO_KEYS'
+        }
+    ],
+    conditional_function: function() {
+        return failed_attention_checks === 2;
+    }
+};
+
+const instructions = {
+        type: jsPsychInstructions,
+        pages: [
+            `
+            <p>In this task, you will read short scenarios about different people. </p><p>Each scenario describes an action that the person could take. </p><p>Every page describes a different person.</p>
+            `,
+
+            `
+            <p>You will also see each person's personality trait scores. <br>These are based on the Big Five personality traits: <br><b>Openness, Conscientiousness, Extraversion, Agreeableness, and Neuroticism</b>.</p>
+            <p>Each trait score is shown as a percentile. <br>For example, <b>60% Extraversion</b> means that the person scores higher than 60% of people in Extraversion.</p>
+            `,
+
+            `
+            <p><b>The definitions of the Big Five traits are as follows:</b></p>
+            <ul style="text-align:left; max-width:600px; margin:auto;">
+              <br><li><b>Openness</b>: curious, creative, and interested in trying new things or exploring new ideas</li>
+              <br><li><b>Conscientiousness</b>: disciplined, organized, reliable, and focused on achieving goals</li>
+              <br><li><b>Extraversion</b>: outgoing, talkative, and assertive in social situations</li>
+              <br><li><b>Agreeableness</b>: kind, cooperative, caring, and willing to help others</li>
+              <br><li><b>Neuroticism</b>: more easily upset, anxious, or emotionally reactive. Also more willing to take higher risks</li>
+            </ul>
+            `,
+
+            `
+            <p>For each scenario, you will judge how likely the person is to take the action <b>based on their personality traits</b>.</p>
+            <p>You will use a slider scale to make your judgment.</p>
+            <p><i>The slider selection button will appear once you click on the slider.</i></p>
+            `
+        ],
+        allow_backward: true,
+        show_clickable_nav: true
+    };
+    
+    // comprehension check
+    var gap = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: " ",
+        choices: 'NO_KEYS',
+        trial_duration: 1000
+    };
+
+    var failed_comprehension_questions = true;
+    let comprehension_questions = {
+        type: jsPsychSurveyMultiChoice,
+        preamble: `Comprehension questions:`,
+        questions: [
+            {
+                prompt: '<b> 1. The goal of the task is to: </b>',
+                options: [
+                    'Read an action and a person\'s personality trait scores, then judge how likely they are to take the action',
+                    'Read an action and judge whether the action is good or bad',
+                    'Read about an action taken and guess what the person\'s personality trait scores are',
+                    'Read a person\'s personality trait scores and judge how accurate those scores are'
+                ],
+                required: true
+            },
+            {
+                prompt: '<b> 2. Openness refers to which of the following definitions? </b>',
+                options: [
+                    'Being kind, cooperative, caring, and willing to help others',
+                    'Being curious, creative, and interested in trying new things or exploring new ideas',
+                    'Being outgoing, talkative, and assertive in social situations',
+                    'Being disciplined, organized, reliable, and focused on achieving goals'
+                ],
+                required: true
+            },
+            {
+                prompt: '<b> 3. Scoring the 80th percentile (80%) for Agreeable means that: </b>',
+                options: [
+                    'They are more agreeable than 80% of people',
+                    'They are agreeable in 80% of situations',
+                    'They are more agreeable than 20% of people'
+                ],
+                required: true
+            },
+            {
+                prompt: '<b> 4. Which trait includes being outgoing and talkative? </b>',
+                options: [
+                    'Neuroticism',
+                    'Extraversion',
+                    'Openness',
+                    'Conscientiousness'
+                ],
+                required: true
+            },
+            {
+                prompt: '<b> 5. If a person scores 20% on Neuroticism, what does that mean? </b>',
+                options: [
+                    'They are more easily upset than most people',
+                    'They are calmer, less anxious, and less risk-seeking than most people',
+                    'They like to try new things'
+                ],
+                required: true
+            }
+        ],
+        on_finish: function(data) {
+            var responses = data.response;
+            if (
+                responses.Q0.includes('likely') == true &&
+                responses.Q1.includes('curious') == true &&
+                responses.Q2.includes('more agreeable than 80%') == true &&
+                responses.Q3.includes('Extraversion') == true &&
+                responses.Q4.includes('calmer') == true
+            ) {
+                failed_comprehension_questions = false;
+            }
+        }
+    };
+
+
+    var fail_page = {
+          type: jsPsychHtmlButtonResponse,
+          stimulus: "<p> Oops! You did not pass the comprehension check. </p>",
+          choices: ['<p style="font-size: 20px"><b> View instructions again </b></p>']
+    };
+
+    var fail = {
+        timeline: [fail_page],
+        conditional_function: function() {
+            return failed_comprehension_questions
+        }
+    };
+
+    var inst_comprehension = {
+        timeline: [instructions, gap, comprehension_questions, fail],
+        loop_function: function(){
+            return failed_comprehension_questions
+        }
+    };
+
+var preload = {
+        type: jsPsychPreload
+    };
+
+    var check_browser = {
+        type: jsPsychBrowserCheck,
+        minimum_width: 600,
+        minimum_height: 400,
+        inclusion_function: function(data) {return (!data.mobile);},
+        exclusion_message:  function(data) {return (data.mobile)? "You must complete this experiment on a computer." : "You cannot participate in this experiment.";}
+    }
+
+    function check_consent(elem) {
+        if (document.getElementById('consent_checkbox').checked) { return true; }
+        else {
+            alert("If you wish to participate, you must check the box.");
+            return false;
+        }
+    };
+
+    var consent = {
+        type: jsPsychExternalHtml,
+        url: 'consent_exp1.html',
+        cont_btn: 'start',
+        force_refresh: true,
+        check_fn: check_consent
+    }
+
+    var full_screen = {
+        type: jsPsychFullscreen,
+        fullscreen_mode: true,
+        message: `<p>To avoid distraction, this task must be completed in <b>full screen</b> mode by clicking the button below.</p>
+                  <p>Please <b>do not exit full-screen mode until the end</b> of the task.</p><br>`,
+        button_label: "Enter full screen"
+    }
+
+    var demographics = {
+      type: jsPsychSurveyHtmlForm,
+      preamble: "<p>We need some more information from you. <br> This will not be associated with your profile, nor will it impact you in any way.</p>",
+      html: `
+        <label for="gender">1. Gender:</label>
+        <select name="gender" id="gender" required>
+          <option value="" disabled selected>Select your gender</option>
+          <option value="Female">Female</option>
+          <option value="Male">Male</option>
+          <option value="Non-binary">Non-binary</option>
+          <option value="Other">Other</option>
+        </select>
+        <br><br>
+
+        <label for="age">2. Age:</label>
+        <input type="number" name="age" id="age" required min="18" max="120">
+        <br><br>
+
+        <label for="summary">3. Please summarize the task you just completed in 1–2 sentences <br> 
+        so that we know you've been paying attention:</label><br>
+        <textarea name="summary" id="summary" rows="3" cols="60" required></textarea>
+        <br><br>
+
+        <label for="comment">4. Optional: Let us know if you have any comments or feedback!</label><br>
+        <textarea name="comment" id="comment" rows="3" cols="60"></textarea>
+        <br>
+      `,
+      on_finish: function(data) {
+        data.gender = data.response.gender;
+        data.age = data.response.age;
+        data.summary = data.response.summary;
+        data.comment = data.response.comment;
+        var interaction_data = jsPsych.data.getInteractionData();
+        data.screen = interaction_data.json();
+        jsPsych.data.addProperties({ total_failed_attention_checks: failed_attention_checks });
+      },
+    };
+
+    // start exp
+    timeline.push(preload);
+    timeline.push(check_browser);
+    timeline.push(consent);
+    timeline.push(full_screen);
+    timeline.push(inst_comprehension);
+
+    for (let i = 0; i < stimuli.length; i++) {
+      if (i % 5 == 0) { timeline.push(new_scenario_reminder(i)) }
+
+      timeline.push(makeSliderTrial(i));
+
+      if (i === 38) { 
+          timeline.push(attention_check(i));
+          timeline.push(warning);
+          timeline.push(termination);
+      }
+
+      if (i === 72) { 
+          timeline.push(attention_check(i));
+          timeline.push(warning);
+          timeline.push(termination);
+      }
+    }
+
+    timeline.push(demographics)
+
+
+    // save data
+    function saveData(name, data) {
+        var xhr = new XMLHttpRequest();
+          xhr.open('POST', 'save_data.php');
+          xhr.setRequestHeader('Content-Type', 'application/json');
+          xhr.send(JSON.stringify({filename: name, filedata: data}));    
+    } 
+
+    let save_data = {
+        type: jsPsychCallFunction,
+        func: function(){ saveData(expIndex + '_' + subjectId + '_output', jsPsych.data.get().csv()); }
+    }
+    timeline.push(save_data);
+
+    let completion = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: `<p> Your response has been recorded!</p>
+        <p> Your completion code is</p> <b> ${comp_code} </b>
+        <p> Please submit with this code for approval and payment. You will not be be able to access this code after leaving this page!</p>
+        <p> No further action is necessary; you may now exit the window at any time.</p>`,
+        choices: 'NO_KEYS',
+    }
+    timeline.push(completion);
+
+jsPsych.run(timeline)
+    </script>
+</html>
