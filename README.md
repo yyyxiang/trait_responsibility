@@ -21,7 +21,7 @@ Preregistration: https://aspredicted.org/hh3sx5.pdf
 
 ## Code
 
-Located in the `Code` folder:
+Located in the `code` folder:
 
 - `1_compute_trait_weights.R` — Analysis script for Experiment 1. Computes and visualizes trait weights.
 - `2_responsibility_analysis.R` — Analysis script for Experiment 2. Simulates model predictions, compares models to each other, and evaluates them against behavioral data.
@@ -32,7 +32,7 @@ Located in the `Code` folder:
 
 ## Data
 
-Located in the `Data` folder:
+Located in the `data` folder:
 
 - `exp1.csv` — Data from Experiment 1.
   - `scenario`: Scenario index (see Supplement for the list of 20 scenarios).
@@ -51,7 +51,7 @@ Located in the `Data` folder:
 
 ## Experiment Materials
 
-Located in the `Experiment` folder:
+Located in the `experiments` folder:
 
 - `exp1.html` and `exp2_resp.html` — Experiment 1 and Experiment 2 task scripts.
 - `consent_exp1.html` and `consent_exp2.html` — Consent forms.
