@@ -13,7 +13,7 @@ dat <- read.csv("./../data/exp2.csv", header = T, na.strings = c("", "NA", "null
 all_traits <- c("openness", "conscientiousness", "extraversion", "agreeableness", "neuroticism")
 all_scores <- c(0, 20, 40, 60, 80, 100)
 
-weights_df <- read.csv("output/trait_weights.csv", header = T)
+weights_df <- read.csv("output/exp1_trait_weights.csv", header = T)
 dat_weight <- dat %>% 
   select(-starts_with("responsibility_")) %>% 
   left_join(weights_df, by = "scenario")
