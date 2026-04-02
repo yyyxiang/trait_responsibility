@@ -1,6 +1,6 @@
 # trait_responsibility
 
-Data, code, and materials for: Xiang, Y., Hsu, S., & Gershman, S. J. (2025). _Intuitions about trait responsibilities._
+Data, code, and materials for: Xiang, Y., Hsu, S., & Gershman, S. J. (2026). _Intuitions about trait responsibilities._
 
 ## Project Overview
 
@@ -8,7 +8,7 @@ Many popular depictions of mental life imagine personality traits as if they wer
 
 To investigate this, we conducted two experiments. In **Experiment 1**, participants judged how trait scores predicted a person's actions. In **Experiment 2**, participants judged how responsible each trait was for those same actions. Using the predictive judgments from Experiment 1, we constructed and evaluated computational models of trait responsibility attribution, adapted from models of responsibility in groups.
 
-Our results showed that responsibility judgments were best explained by a **production-style model** that assigns responsibility based on a trait's predictive contribution to behavior. Unlike studies of personal responsibility in groups, **counterfactual-style models** did not account for the data as well. These findings reveal both parallels and differences between how people attribute responsibility to traits within a person and individuals within a group.
+Our results showed that responsibility judgments were best explained by an **actual-contribution model** that assigns responsibility based on a trait's predictive contribution to behavior. Unlike studies of personal responsibility in groups, **counterfactual-contribution models** did not account for the data as well. These findings reveal both parallels and differences between how people attribute responsibility to traits within a person and individuals within a group.
 
 ## Links
 
