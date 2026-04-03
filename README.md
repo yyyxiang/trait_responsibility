@@ -59,3 +59,22 @@ Located in the `experiments` folder:
 - Experiments were built using jsPsych v8.2.2, available at:  
   https://github.com/jspsych/jsPsych/releases/tag/jspsych%408.2.2  
 - Note: To run the experiments locally, the consent form needs to be commented out (i.e., comment out `timeline.push(consent);`) and jsPsych library files need to be added to this folder.
+
+---
+
+## Figures
+
+Located in the `figures` folder: Figures 1-4 in the main text.
+
+---
+
+## Supplement
+
+Located in the `supplement` folder: 
+
+- `supplement_analysis.R` — Analysis script for plotting perceived trait score distribution from a pilot dataset (*N* = 50) and predictions of two perceived population-based counterfactual models.
+- `supplement_helper.R` — Helper functions for loading regression outputs and plotting.
+- `perceived_pop_pilot.csv` — Pilot data (*N* = 50) on perceived trait score distribution. 
+  For each trait indicated by the `trait` column, participants answered "How many people do you think fall into each rank range?" for each trait score range (0%-10%, 10%-30%, 30%-50%, 50%-70%, 70%-90%, 90%-100%), then their responses were converted to proportions of the population in each bin (`p_0`, `p_20`, `p_40`, `p_60`, `p_80`, `p_100`). 
+- `output/` — Contains intermediate output files (e.g., saved data frames and model results) generated during the analyses. These files allow the scripts to skip time-consuming computations on subsequent runs.
+- `figS1.pdf` and `figS2.pdf` — Figures S1 and S2 in the supplement.
