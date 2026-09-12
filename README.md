@@ -72,9 +72,11 @@ Located in the `figures` folder: Figures 1-4 in the main text.
 
 Located in the `supplement` folder: 
 
-- `supplement_analysis.R` — Analysis script for plotting perceived trait score distribution from a pilot dataset (*N* = 50) and predictions of two perceived population-based counterfactual models.
+- `supplement_analysis.R` — Analysis script for plotting trait score mutability judgments from a pilot dataset (*N* = 30), perceived trait score distribution from a pilot dataset (*N* = 50), and predictions of two perceived population-based counterfactual models.
 - `supplement_helper.R` — Helper functions for loading regression outputs and plotting.
+- - `trait_mutability_pilot.csv` — Pilot data (*N* = 30) on judgments about the probability of each alternative trait score given an observed trait score.
+  For each trait and observed trait score, participants answered "Person X took the personality test twice within 5 years. In one test, Person X scored Y\% on trait Z. How likely is it that Person X would score each of these alternative scores on  trait Z in the other test?" for each counterfactual score. 
 - `perceived_pop_pilot.csv` — Pilot data (*N* = 50) on perceived trait score distribution. 
   For each trait indicated by the `trait` column, participants answered "How many people do you think fall into each rank range?" for each trait score range (0%-10%, 10%-30%, 30%-50%, 50%-70%, 70%-90%, 90%-100%), then their responses were converted to proportions of the population in each bin (`p_0`, `p_20`, `p_40`, `p_60`, `p_80`, `p_100`). 
 - `output/` — Contains intermediate output files (e.g., saved data frames and model results) generated during the analyses. These files allow the scripts to skip time-consuming computations on subsequent runs.
-- `figS1.pdf` and `figS2.pdf` — Figures S1 and S2 in the supplement.
+- `figS1.pdf`, `figS2.pdf`, and `figS3.pdf` — Figures S1, S2, and S3 in the supplement.
